@@ -2,7 +2,6 @@
 namespace NamelessCoder\CmsFluidPrecompiler;
 
 use Composer\Autoload\ClassLoader;
-use TYPO3\CMS\Backend\Console\Application;
 use TYPO3\CMS\Core\Core\Bootstrap;
 
 /**
@@ -15,7 +14,7 @@ use TYPO3\CMS\Core\Core\Bootstrap;
  * In other words: bootstrapping-only Application for third
  * party console commands, usually vendor/bins.
  */
-class ExternalApplication extends Application
+class ExternalApplication extends \TYPO3\CMS\Core\Core\SystemEnvironmentBuilder
 {
 
     /**
@@ -60,17 +59,17 @@ class ExternalApplication extends Application
             $entryDir = dirname($entryDir);
         }
 
-        $this->defineLegacyConstants();
+        $this->defineLegacyConstants('BE');
 
         $this->bootstrap = Bootstrap::getInstance()
             ->initializeClassLoader($classLoader)
             ->setRequestType(TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI)
             ->baseSetup($this->entryPointLevel)
             ->configure()
-            ->loadExtensionTables()
-            ->initializeCachingFramework();
+            ->initializeCachingFramework()
+            ->initializeBackendUser();
 
         $this->bootstrap;
-    }
 
+    }
 }
